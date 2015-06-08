@@ -331,13 +331,14 @@ c_k(\mathbf{x}) = \displaystyle\sum_i \displaystyle\sum_j w_{i,j} x_{i,j,k}
 \pagebreak
 
 \begin{algorithm}
+\floatname{algorithm}{Алгоритм}
 \caption{Жадный алгоритм}\label{alg:greedy}
 \begin{algorithmic}[1]
 
 \ForAll {$t \in T$}
     \ForAll {$var \in Vars(t)$}
         \ForAll {$v \in V$}
-            \State $time, pos \gets MinPathTime(t, var, Plan(v))$
+            \State $time, pos \gets$ \Call{MinPathTime}{$t, var, Plan(v)}$
             \If {$time < minTime$}
                 \State $minTime \gets time$
                 \State $bestPos \gets pos$
@@ -346,8 +347,8 @@ c_k(\mathbf{x}) = \displaystyle\sum_i \displaystyle\sum_j w_{i,j} x_{i,j,k}
             \EndIf
         \EndFor
     \EndFor
-    \State $Insert(t, bestVar, Plan(bestV), bestPos)$
-    \State $OptimizeVars(Plan(bestV))$
+    \State \Call{Insert}{$t, bestVar, Plan(bestV), bestPos$}
+    \State \Call{OptimizeVars}{$bestV$}
 \EndFor
 
 \end{algorithmic}
@@ -355,21 +356,37 @@ c_k(\mathbf{x}) = \displaystyle\sum_i \displaystyle\sum_j w_{i,j} x_{i,j,k}
 
 Функция $OptimizeVars$ в данном алгоритме устанавливает оптимальные варианты заданий в плане аппарата $bestV$ с помощью метода динамического программирования. Эта функция устроена следующим образом:
 
+\pagebreak
 
 \begin{algorithm}
+\floatname{algorithm}{Алгоритм}
 \caption{Оптимальный выбор вариантов}\label{alg:dynamic}
 \begin{algorithmic}[1]
-\State
+\Procedure{OptimizeVars}{v}
+    \State $p \gets Plan(v)$
+    \State $k \gets 0$
+    \For {$i \in Vars(First(p))$}
+        \State $d[0][i] \gets DistFromStart(First(p))$
+    \EndFor
+    \For {$i = 1..Size(p)$}
+        \ForAll{$var1 \in Vars(p[i - 1])$}
+            \ForAll{$var2 \in Vars(p[i])$}
+                \State $val \gets d[i - 1][var1] + Dist(p[i - 1], p[i])$
+                \If {$d[i][var2] > val$}
+                    \State $d[i][var2] \gets Min(d[i][var2], val)$
+                    \State $prev[i][var2] = var1$
+                \EndIf
+            \EndFor
+        \EndFor
+    \EndFor
+    \State \Call{SetNewVars}{$p, d, prev$}
+\EndProcedure
 \end{algorithmic}
 \end{algorithm}
 
-% ituphanov (2): Тяжеловато из этого что-то понять. Может быть имеет смысл написать в псевдокоде.
-
-% ituphanov (2): Кстати, а как ты в жаднике выбираешь вариант задания? Если его выбирать так же,
-% как ты это делаешь динамикой в ГА, не станет ли жадник выигрывать ГА на регулярных паттернах?
-
 
 \subsubsection{Генетический алгоритм}
+
 \paragraph{Хромосома} ~\\
 \paragraph{Мутации} ~\\
 \paragraph{Скрещивание} ~\\
