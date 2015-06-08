@@ -1,1 +1,4 @@
 *.pdf binary
+*.png binary
+*.eps binary
+*.svg binary
