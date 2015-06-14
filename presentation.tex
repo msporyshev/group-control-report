@@ -1,0 +1,246 @@
+\documentclass{beamer}
+\usepackage[russian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{beamerthemesplit}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{graphics,epsfig, subfigure}
+\usepackage{url}
+
+\definecolor{kugreen}{RGB}{50,93,61}
+\definecolor{kugreenlys}{RGB}{132,158,139}
+\definecolor{kugreenlyslys}{RGB}{173,190,177}
+\definecolor{kugreenlyslyslys}{RGB}{214,223,216}
+\setbeamercovered{transparent}
+\mode<presentation>
+{    \usetheme{Warsaw}
+  \usecolortheme[named=kugreen]{structure}
+\useinnertheme{circles}
+\usefonttheme[onlymath]{serif}
+\setbeamercovered{transparent}
+\setbeamertemplate{blocks}[rounded][shadow=true]
+}
+%\setbeamertemplate{background}{\includegraphics[width=1\textwidth]{natfak_baggrund.pdf}}
+% \logo{\includegraphics[width=1cm]{billeder/logo}}
+
+\title{Разработка алгоритмов оптимизации групповой работы мобильных роботов}
+\author{Студент группы с8503а, Спорышев М. С.}
+\institute{Руководитель: \\ н.с. лаборатории необитаемых подводных аппаратов и их систем, к.т.н. Туфанов И. Е.}
+\date{25 Июня 2015}
+
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+\begin{frame}{Термины}
+\begin{itemize}
+\item АНПА -- автономный необитаемый подводный аппарат
+\item СПУ -- система программного управления
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Зачем нужны АНПА}
+
+Обзорно поисковые задачи
+\begin{itemize}
+\item  Поиск затонувших объектов
+\item Замеры параметров водной среды
+\item Исследование локальных неоднородностей
+\end{itemize}
+
+Использование групп АНПА
+\begin{itemize}
+\item Централизованное управление
+\item Групповое управление
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Используемая система управления}
+
+\begin{enumerate}
+\item Составление заданий для аппаратов
+\item Распределение заданий меджу аппаратами
+\begin{itemize}
+    \item Выбор последовательности заданий
+    \item Выбор варианта заданий
+    \begin{itemize}
+        \item Точка начала
+        \item Точка конца
+        \item Время выполнения
+    \end{itemize}
+\end{itemize}
+\item Перепланирование
+\begin{itemize}
+\item Выход аппарат из строя
+\item Появление нового аппарата
+\item Появление новых заданий
+\item Изменение заданий
+\end{itemize}
+
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}{Математическая модель}
+
+\begin{itemize}
+\item Имеется $m$ аппаратов и $n$ заданий. $q$-ый аппарат в начальный момент времени находится в точке $s_q$
+\item $d_q(\mathbf{a}, \mathbf{b}) = |\mathbf{a} - \mathbf{b}| / u_q$ ~-- время перехода АНПА от точки $\mathbf{a}$ к точке $\mathbf{b}$, где $u_q$ - максимальная скорость $q$-го аппарата.
+
+
+\item Планом аппарата названа последовательность пар $$p = ((i_1, j_1), (i_2, j_2), ..., (i_{|p|}, j_{|p|})), \forall k \in 1..|p|~ i_k \in 1..n, j_k \in 1..v_{i_k}$$.
+
+\item Время выполнения аппаратом с номером $q$ плана $p$, составляет:
+$$
+t_q(p) = d_q(\mathbf{s}_q, \mathbf{a}_{i_1, j_1}) + \sum_{k=2}^{|p|} d_q(\mathbf{b}_{i_{k-1}, j_{k - 1}}, \mathbf{a}_{i_k, j_k}) + \sum_{k=1}^{|p|}l_{i_k, j_k}
+$$
+
+\item Общий план $P = (p_1, p_2, ..., p_m)$
+\item Время выполнения общего плана: $t(P) = \displaystyle \max_{q \in 1..m} t_q(p_q)$
+
+\item $
+t(P) \rightarrow \min
+$
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Существующие решения}
+Множественная задача коммивояжера
+\begin{itemize}
+\item Каждое задание является единственной точкой
+\item Полный граф
+\item Стартовая вершина
+\item Поиск опти мальной системы циклов
+\item Минимизация суммы, максимума
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Жадный алгоритм}
+% \begin{algorithm}
+% \floatname{algorithm}{Алгоритм}
+% \caption{Жадный алгоритм}\label{alg:greedy}
+\begin{algorithmic}[1]
+
+\ForAll {$t \in T$}
+    \ForAll {$var \in Vars(t)$}
+        \ForAll {$v \in V$}
+            \State $time, pos \gets$ \Call{MinPathTime}{$t, var, Plan(v)}$
+            \If {$time < minTime$}
+                \State $minTime \gets time$
+                \State $bestPos \gets pos$
+                \State $bestV \gets v$
+                \State $bestVar \gets var$
+            \EndIf
+        \EndFor
+    \EndFor
+    \State \Call{Insert}{$t, bestVar, Plan(bestV), bestPos$}
+    \State \Call{OptimizeVars}{$bestV$}
+\EndFor
+
+\end{algorithmic}
+% \end{algorithm}
+
+\end{frame}
+
+\begin{frame}{Оптимальный выбор варинатов}
+Известна последовательность заданий, найти варианты заданий, дающие минимальное время выполнения такой последовательности.
+
+Метод динамического программирования
+\begin{itemize}
+\item Номер последнего задания
+\item Номер варианта задания
+\end{itemize}
+
+\begin{algorithmic}
+\State $val \gets d[i - 1][var1] + Dist(p[i - 1], p[i])$
+\If {$d[i][var2] > val$}
+    \State $d[i][var2] \gets Min(d[i][var2], val)$
+    \State $prev[i][var2] = var1$
+\EndIf
+\end{algorithmic}
+
+\end{frame}
+
+\begin{frame}{Генетический алгоритм}
+
+\begin{itemize}
+\item Решение представлено в виде двух хромосом
+\begin{itemize}
+\item Перестановка номеров заданий
+\item Последовательность номеров аппаратов
+\end{itemize}
+
+\item 3 вида мутаций
+\begin{itemize}
+\item Swap
+\item Reverse
+\item Select
+\end{itemize}
+
+\item Скрещивание -- Partially matched crossover
+\item Функция приспособленности
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Целочисленное программирование}
+\begin{itemize}
+\item Точное решение
+\item TSP -- сотни заданий за секунды
+\item Множественная задача коммивояжера
+    \begin{itemize}
+    \item Оптимизация максимума
+    \item Бинарный поиск максимума и оптимизация суммы с доп. ограничениями
+    \end{itemize}
+
+\item Работает медленнее алгоритма Хельда-Карпа
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Реализация}
+
+
+Стороннине библиотеки
+\begin{itemize}
+\item FlopC++
+\item SYMPHONY
+\item OpenCV
+\item Boost
+\end{itemize}
+
+Python
+\begin{itemize}
+\item Pandas
+\item matplotlib
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Тестирование}
+
+\end{frame}
+
+\begin{frame}{Результат}
+Алгоритмы успешно внедрены
+\begin{itemize}
+\item до 18 заданий -- алгоритм Хельда-Карпа
+\item до 40 заданий -- генетический алгоритм
+\item от 40 заданий -- жадный алгоритм
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Заключение}
+\begin{itemize}
+\item Система контроля версий git, 52 коммита, +4900 -1800. Языки C++ и Python.
+\end{itemize}
+
+\end{frame}
+
+\end{document}
