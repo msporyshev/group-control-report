@@ -1,7 +1,9 @@
 \documentclass{beamer}
+
+\usepackage{cmap} % для кодировки шрифтов в pdf
+\usepackage[utf8x]{inputenc}
 \usepackage[russian]{babel}
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
+\usepackage[T1,T2A]{fontenc}
 \usepackage{beamerthemesplit}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
@@ -20,6 +22,7 @@
 \usefonttheme[onlymath]{serif}
 \setbeamercovered{transparent}
 \setbeamertemplate{blocks}[rounded][shadow=true]
+\setbeamertemplate{footline}[page number]{}
 }
 %\setbeamertemplate{background}{\includegraphics[width=1\textwidth]{natfak_baggrund.pdf}}
 % \logo{\includegraphics[width=1cm]{billeder/logo}}
@@ -32,32 +35,47 @@
 
 \begin{document}
 
-\begin{frame}
+\begin{frame}[noframenumbering]
 \titlepage
+
 \end{frame}
 
 
 \begin{frame}{Термины}
 \begin{itemize}
 \item АНПА -- автономный необитаемый подводный аппарат
-\item СПУ -- система программного управления
+\item СПУ -- система программного управленияат
+\item ГА -- генетический алгоритм
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Зачем нужны АНПА}
+\begin{frame}
+    \frametitle{Зачем нужны АНПА}
 
-Обзорно поисковые задачи
-\begin{itemize}
-\item  Поиск затонувших объектов
-\item Замеры параметров водной среды
-\item Исследование локальных неоднородностей
-\end{itemize}
 
-Использование групп АНПА
-\begin{itemize}
-\item Централизованное управление
-\item Групповое управление
-\end{itemize}
+ \begin{columns}[onlytextwidth, t]
+    \begin{column}{0.5\textwidth}
+
+        Обзорно поисковые задачи
+        \begin{itemize}
+        \item  Поиск затонувших объектов
+        \item Замеры параметров водной среды
+        \item Исследование локальных неоднородностей
+        \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+
+        Использование групп АНПА
+        \begin{itemize}
+        \item Централизованное управление
+        \item Групповое управление
+        \end{itemize}
+
+    \end{column}
+
+​\end{columns}
+
+
 
 \end{frame}
 
@@ -66,60 +84,140 @@
 \begin{enumerate}
 \item Составление заданий для аппаратов
 \item Распределение заданий меджу аппаратами
-\begin{itemize}
-    \item Выбор последовательности заданий
-    \item Выбор варианта заданий
-    \begin{itemize}
-        \item Точка начала
-        \item Точка конца
-        \item Время выполнения
-    \end{itemize}
-\end{itemize}
+
 \item Перепланирование
+
+
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Составление заданий для аппаратов}
+Составляются $n$ заданий. Предполагается, что каждый аппарат может выполнять каждое задание.
+\begin{columns}[onlytextwidth, t]
+    \begin{column}{0.6\textwidth}
+
+        $i$--e задание может быть выполнено в одном из $v_i$ вариантов:
+        \begin{itemize}
+        \item $(\mathbf{a_{i 1}}, \mathbf{b_{i 1}}, \tau_{i 1})$
+        \item $(\mathbf{a_{i 2}}, \mathbf{b_{i 2}}, \tau_{i 2})$
+        \item $...$
+        \item $(\mathbf{a_{i v_i}}, \mathbf{b_{i v_i}}, \tau_{i v_i})$
+        \end{itemize}
+
+    \end{column}
+    \begin{column}{0.4\textwidth}
+
+        \begin{figure}[here]
+            \includegraphics[scale=0.4]{images/AUV5.JPG}
+        \end{figure}
+    \end{column}
+
+​\end{columns}
+\end{frame}
+
+\begin{frame}{Распределение заданий между аппаратами}
+Имеется $m$ аппаратов. Каждому аппарату составляется план заданий так, чтобы каждое было выполнено в единственном варианте, только одним аппаратом, единственный раз.
+\begin{columns}[onlytextwidth, t]
+    \begin{column}{0.6\textwidth}
+        \linebreak
+        Результат распределения заданий:
+        \begin{itemize}
+            \item $q$--му аппарату соответствует последовательность пар номеров заданий и их вариантов:
+            $p_q = ((i_1, j_1), (i_2, j_2), ..., (i_{|p|}, j_{|p|}))$
+            \item $\forall k \in 1..|p|~ $
+            \begin{itemize}
+                \item $i_k \in 1..n$ -- номер задания
+                \item $j_k \in 1..v_{i_k}$  -- номер варианта
+            \end{itemize}
+
+        \end{itemize}
+
+    \end{column}
+    \begin{column}{0.4\textwidth}
+
+        \begin{figure}[here]
+            \includegraphics[scale=0.4]{images/hk2.png}
+        \end{figure}
+    \end{column}
+
+​\end{columns}
+\end{frame}
+
+\begin{frame}{Перепланирование}
 \begin{itemize}
-\item Выход аппарат из строя
+\item Выход аппарата из строя
 \item Появление нового аппарата
 \item Появление новых заданий
 \item Изменение заданий
 \end{itemize}
+\end{frame}
 
-\end{enumerate}
+\begin{frame}{Использующийся алгоритм}
+
+Алгоритм Хельда-Карпа
+\begin{itemize}
+\item Экспоненциальная зависимость времени работы от количества заданий (Перебор подмножеств)
+\item Работает дольше минуты для 20 заданий
+\end{itemize}
+
+\begin{block}{Цель}
+Разработать новые алгоритмы для решения задачи планирования, способные составлять планы для 100 заданий и 5 аппаратов за приемлемое время(до минуты) и внедрить их в существующую СПУ.
+\end{block}
 
 \end{frame}
 
 \begin{frame}{Математическая модель}
 
+
+\begin{block}{Входные данные}
 \begin{itemize}
 \item Имеется $m$ аппаратов и $n$ заданий. $q$-ый аппарат в начальный момент времени находится в точке $s_q$
 \item $d_q(\mathbf{a}, \mathbf{b}) = |\mathbf{a} - \mathbf{b}| / u_q$ ~-- время перехода АНПА от точки $\mathbf{a}$ к точке $\mathbf{b}$, где $u_q$ - максимальная скорость $q$-го аппарата.
+\end{itemize}
+\end{block}
 
+\begin{itemize}
 
-\item Планом аппарата названа последовательность пар $$p = ((i_1, j_1), (i_2, j_2), ..., (i_{|p|}, j_{|p|})), \forall k \in 1..|p|~ i_k \in 1..n, j_k \in 1..v_{i_k}$$.
+\item План $q$-го аппарата: $p = ((i_1, j_1), (i_2, j_2), ..., (i_{|p|}, j_{|p|}))$.
 
-\item Время выполнения аппаратом с номером $q$ плана $p$, составляет:
-$$
-t_q(p) = d_q(\mathbf{s}_q, \mathbf{a}_{i_1, j_1}) + \sum_{k=2}^{|p|} d_q(\mathbf{b}_{i_{k-1}, j_{k - 1}}, \mathbf{a}_{i_k, j_k}) + \sum_{k=1}^{|p|}l_{i_k, j_k}
-$$
+\item
+$
+t_q(p) = d_q(\mathbf{s}_q, \mathbf{a}_{i_1, j_1}) + \displaystyle\sum_{k=2}^{|p|} d_q(\mathbf{b}_{i_{k-1} j_{k - 1}}, \mathbf{a}_{i_k j_k}) + \displaystyle\sum_{k=1}^{|p|}\tau_{i_k j_k}
+$
 
 \item Общий план $P = (p_1, p_2, ..., p_m)$
-\item Время выполнения общего плана: $t(P) = \displaystyle \max_{q \in 1..m} t_q(p_q)$
+\item Время выполнения общего плана: $t(P) = \displaystyle \max_{q \in 1..m} t_q(p)$
 
-\item $
-t(P) \rightarrow \min
-$
 \end{itemize}
+
+\begin{block}{Задача}
+Найти общий план $P$ при котором $t(P) \rightarrow \min$
+\end{block}
 
 \end{frame}
 
 \begin{frame}{Существующие решения}
-Множественная задача коммивояжера
-\begin{itemize}
-\item Каждое задание является единственной точкой
-\item Полный граф
-\item Стартовая вершина
-\item Поиск опти мальной системы циклов
-\item Минимизация суммы, максимума
-\end{itemize}
+\begin{columns}[onlytextwidth, t]
+    \begin{column}{0.6\textwidth}
+        Множественная задача коммивояжера
+        \begin{itemize}
+        \item Каждое задание является единственной точкой
+        \item Полный граф
+        \item Стартовая вершина
+        \item Поиск опти мальной системы циклов
+        \item Минимизация суммы, максимума
+        \end{itemize}
+
+    \end{column}
+    \begin{column}{0.4\textwidth}
+
+        \begin{figure}[here]
+            \includegraphics[scale=0.4]{images/mtsp.png}
+        \end{figure}
+    \end{column}
+
+​\end{columns}
+
 \end{frame}
 
 \begin{frame}{Жадный алгоритм}
@@ -150,7 +248,7 @@ $
 \end{frame}
 
 \begin{frame}{Оптимальный выбор варинатов}
-Известна последовательность заданий, найти варианты заданий, дающие минимальное время выполнения такой последовательности.
+Известен план некоторого аппарата, найти варианты заданий, дающие минимальное время выполнения этого плана.
 
 Метод динамического программирования
 \begin{itemize}
@@ -158,36 +256,50 @@ $
 \item Номер варианта задания
 \end{itemize}
 
+\begin{exampleblock}{Переход к следующему состоянию}
+
 \begin{algorithmic}
-\State $val \gets d[i - 1][var1] + Dist(p[i - 1], p[i])$
+\State $val \gets d[i - 1][var1] + Dist(v, p[i - 1], var1, p[i], var2)$
 \If {$d[i][var2] > val$}
     \State $d[i][var2] \gets Min(d[i][var2], val)$
     \State $prev[i][var2] = var1$
 \EndIf
 \end{algorithmic}
 
+\end{exampleblock}
+
 \end{frame}
 
 \begin{frame}{Генетический алгоритм}
+\begin{columns}[onlytextwidth]
+    \begin{column}{0.6\textwidth}
+        \begin{itemize}
+            \item Решение представлено в виде двух хромосом
+            \begin{itemize}
+            \item Перестановка номеров заданий
+            \item Последовательность номеров аппаратов
+            \end{itemize}
 
-\begin{itemize}
-\item Решение представлено в виде двух хромосом
-\begin{itemize}
-\item Перестановка номеров заданий
-\item Последовательность номеров аппаратов
-\end{itemize}
+            \item 3 вида мутаций
+            \begin{itemize}
+            \item Swap
+            \item Reverse
+            \item Select
+            \end{itemize}
 
-\item 3 вида мутаций
-\begin{itemize}
-\item Swap
-\item Reverse
-\item Select
-\end{itemize}
+            \item Скрещивание -- Partially matched crossover
+            \item Функция приспособленности
+        \end{itemize}
 
-\item Скрещивание -- Partially matched crossover
-\item Функция приспособленности
-\end{itemize}
+    \end{column}
+    \begin{column}{0.4\textwidth}
 
+        \begin{figure}[here]
+            \includegraphics[scale=0.5]{images/300px-Pmx.png}
+        \end{figure}
+    \end{column}
+
+​\end{columns}
 \end{frame}
 
 \begin{frame}{Целочисленное программирование}
@@ -224,6 +336,28 @@ Python
 \end{frame}
 
 \begin{frame}{Тестирование}
+Визуализация
+\begin{figure}[here]
+    \includegraphics[scale=0.5]{images/hk2.png}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}{Тестирование}
+Время выполнения плана на каждом тесте
+\begin{figure}[here]
+    \includegraphics[scale=0.5]{images/test_small1.jpg}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}{Тестирование}
+Стоимость решения ГА от количества итераций
+\begin{figure}[here]
+    \includegraphics[scale=0.5]{images/iter-value-20-plot.eps}
+\end{figure}
 
 \end{frame}
 
