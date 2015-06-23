@@ -22,27 +22,43 @@
 \usepackage{hyperref}
 \usepackage{cleveref}
 \usepackage{url}
+% \usepackage[none]{hyphenat}
+
+\usepackage{geometry}
+\geometry{left=3cm}
+\geometry{right=1cm}
+\geometry{top=2cm}
+\geometry{bottom=3cm}
+% \usepackage{babel}
+\tolerance=1
+\emergencystretch=\maxdimen
+\hyphenpenalty=10000
+\hbadness=10000
+
 
 
 \linespread{1.3} % полуторный интервал
 % \renewcommand{\rmdefault}{ftm} % Times New Roman
-\frenchspacing
+% \frenchspacing
 
 % ituphanov
 % Надо разобраться с полями. Сейчас диплом выглядит как книжка-малышка.
 
-\usepackage{fancyhdr}
-\pagestyle{fancy}
-\fancyhf{}
-\fancyfoot[C]{\thepage}
-\fancyheadoffset{0mm}
-\fancyfootoffset{0mm}
-\setlength{\headheight}{17pt}
-\renewcommand{\headrulewidth}{0pt}
-\renewcommand{\footrulewidth}{0pt}
-\fancypagestyle{plain}{
-    \fancyhf{}
-    \rhead{\thepage}}
+% \usepackage{fancyhdr}
+% \pagestyle{fancy}
+% \fancyhf{}
+% \fancyfoot[C]{\normalsize \thepage}
+% \fancyheadoffset{0mm}
+% \fancyfootoffset{0mm}
+% \setlength{\headheight}{17pt}
+% \renewcommand{\headrulewidth}{0pt}
+% \renewcommand{\footrulewidth}{0pt}
+% \fancypagestyle{plain}{
+%     \fancyhf{}
+%     \rhead{\thepage}}
+
+\pagenumbering{arabic}
+
 \setcounter{page}{2}
 
 \usepackage[tableposition=top]{caption}
@@ -318,7 +334,7 @@ c_k(\mathbf{x}) = \displaystyle\sum_i \displaystyle\sum_j w_{i j} x_{i j k}, ~\m
 \item После вставки методом динамического программирования определим оптимальные варианты всех заданий в плане выбранного аппарата.
 \end{enumerate}
 
-% \pagebreak
+\pagebreak
 
 \begin{algorithm}
 \floatname{algorithm}{Алгоритм}
@@ -420,6 +436,7 @@ c_k(\mathbf{x}) = \displaystyle\sum_i \displaystyle\sum_j w_{i j} x_{i j k}, ~\m
 \paragraph{Скрещивание} ~\\
 Первая хромосома каждой особи представлена в виде перестановки. Возникает проблема при скрещивании таких хромосом, ведь обычный обмен частями хромосом приводит к нарушению корректности перестановки. Существуют различные способы скрещивания перестановок. Среди них был выбран PMX (Partially Matched Crossover), о нем можно подробнее узнать в работе \cite{goldberg1985alleles}
 
+\pagebreak
 \begin{figure}[here]
 \includegraphics{images/300px-Pmx.png}
 \caption{Partially matched crossover}
@@ -480,6 +497,8 @@ c_k(\mathbf{x}) = \displaystyle\sum_i \displaystyle\sum_j w_{i j} x_{i j k}, ~\m
 \end{itemize}
 
 На \cref{fig:modules} показаны зависимости между модулями программы.
+
+\pagebreak
 \begin{figure}[here]
 \includegraphics[scale=0.5]{images/group-control.png}
 \caption{Модули системы}
@@ -507,7 +526,7 @@ c_k(\mathbf{x}) = \displaystyle\sum_i \displaystyle\sum_j w_{i j} x_{i j k}, ~\m
 \caption{Зависимость стоимости решения от номера теста для всех алгоритмов. 2 аппарата, до 18 заданий.}
 \label{fig:alg_small}
 \end{figure}
-\pagebreak
+% \pagebreak
 
 На \cref{fig:alg_small} показаны результаты запуска алгоритмов на тестах с 2мя аппаратами и до 18 заданий. Точное решение (hk\_solver) на них работает не более 10 секунд. Видно, что на таких размерах входных данных выгоднее использовать именно его. Также можно заметить, что генетический алгоритм находит приближенное решение гораздо более близкое к точному, чем жадное.
 
@@ -522,8 +541,6 @@ c_k(\mathbf{x}) = \displaystyle\sum_i \displaystyle\sum_j w_{i j} x_{i j k}, ~\m
 
 \begin{figure}[here]
 \includegraphics[scale=0.6]{images/test_small3.jpg}
-% ituphanov
-% этот рисунок куда-то делся
 \caption{2 аппарата, 30 заданий.}
 \label{fig:alg30}
 \end{figure}
