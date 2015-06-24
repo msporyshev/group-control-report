@@ -5,9 +5,11 @@
 \usepackage[russian]{babel}
 \usepackage[T1,T2A]{fontenc}
 \usepackage{beamerthemesplit}
+\usepackage{tkz-graph}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{graphics,epsfig, subfigure}
+\usepackage[percent]{overpic}
 \usepackage{url}
 
 \definecolor{kugreen}{RGB}{50,93,61}
@@ -73,6 +75,7 @@
 \item СПУ -- система программного управления
 \item ГА -- генетический алгоритм
 \item МАРК -- морской автономный робототехнический комплекс лаборатории НПА и их систем ДВФУ.
+\item mTSP -- множественная задачи коммивояжера (multiple traveling salesman problem)
 \end{itemize}
 \end{frame}
 
@@ -82,12 +85,17 @@
 
  \begin{columns}[onlytextwidth, t]
     \begin{column}{0.5\textwidth}
-
         Обзорно-поисковые задачи
         \begin{itemize}
         \item Поиск затонувших объектов
         \item Замеры параметров водной среды
-        \item Исследование локальных неоднородностей
+        \item Исследование локальных неоднородностей \linebreak
+        \end{itemize}
+
+        Использование групп АНПА
+        \begin{itemize}
+        \item Централизованное управление
+        \item Групповое управление
         \end{itemize}
     \end{column}
 
@@ -96,11 +104,9 @@
 
     \begin{column}{0.4\textwidth}
 
-        Использование групп АНПА
-        \begin{itemize}
-        \item Централизованное управление
-        \item Групповое управление
-        \end{itemize}
+        \begin{figure}[here]
+            \includegraphics[scale=0.4]{images/AUV5.JPG}
+        \end{figure}
 
     \end{column}
 
@@ -122,17 +128,7 @@
 % слайдов и ты их будешь часто перелистывать, не давая слушателю вообще понять что происходит.
 % Даже внимательный слушатель от тебя остаёт. Или сначала читает слайд, потом слушает тебя, потом
 % ещё раз читает. Если ты будешь слайды держать по 10-20 секунд, он вообще ничего не поймёт.
-\begin{frame}{Используемая система управления}
 
-\begin{enumerate}
-\item Составление заданий для аппаратов
-\item Распределение заданий между аппаратами
-
-\item Перепланирование
-
-
-\end{enumerate}
-\end{frame}
 
 % ituphanov
 % Я за то чтобы объединить следующие три слайда (а предыдущий выкинуть),
@@ -156,76 +152,15 @@
         \item $...$
         \item $(\mathbf{a_{i v_i}}, \mathbf{b_{i v_i}}, \tau_{i v_i})$
         \end{itemize}
-
+        $\mathbf{a_{i j}}$~-- точка трехмерного пространства.
     \end{column}
     \begin{column}{0.4\textwidth}
-% ituphanov
-% вот эту картинку я предлагаю наверх.
-        \begin{figure}[here]
-            \includegraphics[scale=0.4]{images/AUV5.JPG}
-        \end{figure}
+
     \end{column}
 
 ​\end{columns}
 \end{frame}
 
-\begin{frame}{Распределение заданий между аппаратами}
-Имеется $m$ аппаратов. Каждому аппарату составляется план заданий так, чтобы каждое было выполнено в единственном варианте, только одним аппаратом, единственный раз.
-\begin{columns}[onlytextwidth, t]
-    \begin{column}{0.6\textwidth}
-        \linebreak
-        Результат распределения заданий:
-        \begin{itemize}
-            \item $q$--му аппарату соответствует последовательность пар номеров заданий и их вариантов:
-            $p_q = ((i_1, j_1), (i_2, j_2), ..., (i_{|p_q|}, j_{|p_q|}))$
-            \item $\forall k \in 1..|p_q|~ $
-            \begin{itemize}
-                \item $i_k \in 1..n$ -- номер задания
-                \item $j_k \in 1..v_{i_k}$  -- номер варианта
-            \end{itemize}
-
-        \end{itemize}
-
-    \end{column}
-    \begin{column}{0.4\textwidth}
-
-        \begin{figure}[here]
-            \includegraphics[scale=0.4]{images/hk2.png}
-        \end{figure}
-    \end{column}
-
-​\end{columns}
-\end{frame}
-
-\begin{frame}{Перепланирование}
-\fontsize{14pt}{7.2}\selectfont
-
-\begin{itemize}
-\item Выход аппарата из строя
-\item Появление нового аппарата
-\item Появление новых заданий
-\item Изменение заданий
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Цель работы}
-
-Раньше использовался алгоритм Хельда-Карпа
-\begin{itemize}
-\item Экспоненциальная зависимость времени работы от количества заданий (Перебор подмножеств)
-\item Работает дольше минуты для 20 заданий
-\end{itemize}
-.
-\begin{block}{Цель}
-Разработать новые алгоритмы для решения задачи планирования, способные составлять планы для 100 заданий и 5 аппаратов за приемлемое время(несколько минут) и внедрить их в существующую СПУ.
-\end{block}
-
-\end{frame}
-
-% ituphanov
-% Во. Вот этот слайд, можно убрать отсюда и частично использовать выше.
-% Потому что у тебя как бы в обоих слайдах речь идёт об одном и том же.
-% Можно сделать слайд "Задача оптимизации плана".
 \begin{frame}{Математическая модель}
 
 
@@ -256,6 +191,43 @@ $
 
 \end{frame}
 
+\begin{frame}{Пример плана}
+\begin{overpic}[scale=0.7]{images/hk2.png}
+ \put (20,90) {$\mathbf{a_{i 1}}/\mathbf{b_{i 2}}$}
+ \put (19,60) {\rotatebox{90}{$\tau_{i 1}/\tau_{i 2}$}}
+ \put (20,45) {$\mathbf{a_{i 2}}/\mathbf{b_{i 1}}$}
+ \put (50,55) {$d_1$}
+ \put (86,60) {$d_1$}
+
+ \put (95,77) {$\mathbf{s_1}$}
+
+ \put (6,85) {$d_2$}
+ \put (10,53) {$d_2$}
+ \put (2,95) {$\mathbf{s_2}$}
+
+\end{overpic}
+\end{frame}
+
+\begin{frame}{Цель работы}
+
+Раньше использовался алгоритм Хельда-Карпа
+\begin{itemize}
+\item Экспоненциальная зависимость времени работы от количества заданий (Перебор подмножеств)
+\item Работает дольше минуты для 20 заданий
+\end{itemize}
+.
+\begin{block}{Цель}
+Разработать новые алгоритмы для решения задачи планирования, способные составлять планы для 100 заданий и 5 аппаратов за приемлемое время(несколько минут) и внедрить их в существующую СПУ.
+\end{block}
+
+\end{frame}
+
+% ituphanov
+% Во. Вот этот слайд, можно убрать отсюда и частично использовать выше.
+% Потому что у тебя как бы в обоих слайдах речь идёт об одном и том же.
+% Можно сделать слайд "Задача оптимизации плана".
+
+
 \begin{frame}{Существующие решения}
 \begin{columns}[onlytextwidth, t]
     \begin{column}{0.6\textwidth}
@@ -284,6 +256,8 @@ $
 % \begin{algorithm}
 % \floatname{algorithm}{Алгоритм}
 % \caption{Жадный алгоритм}\label{alg:greedy}
+Асимптотика времени работы -- $O(n^2)$.
+
 $T$ -- номера заданий. $V$ -- номера аппаратов. $Vars(t)$ - номера вариантов задания $t$.
 \begin{algorithmic}[1]
 
@@ -329,13 +303,14 @@ $T$ -- номера заданий. $V$ -- номера аппаратов. $Var
     \State $prev[i][var2] = var1$
 \EndIf
 \end{algorithmic}
-
 \end{exampleblock}
+
+Линейное время работы относительно количества заданий в плане.
 
 \end{frame}
 
 \begin{frame}{Генетический алгоритм}
-\begin{columns}[onlytextwidth]
+\begin{columns}[onlytextwidth,t]
     \begin{column}{0.6\textwidth}
         \begin{itemize}
             \item Решение представлено в виде двух хромосом
@@ -351,19 +326,22 @@ $T$ -- номера заданий. $V$ -- номера аппаратов. $Var
             \item Select
             \end{itemize}
 
-            \item Оператор скрещивания -- Partially matched crossover
             \item Функция приспособленности использует метод динамического программирования для оптимального подбора вариантов.
+            \linebreak
         \end{itemize}
 
     \end{column}
     \begin{column}{0.4\textwidth}
-
+        \begin{itemize}
+            \item Оператор скрещивания -- Partially matched crossover
+        \end{itemize}
         \begin{figure}[here]
             \includegraphics[scale=0.5]{images/300px-Pmx.png}
         \end{figure}
     \end{column}
 
 ​\end{columns}
+Асимптотика времени работы одной итерации ГА: $O(sn + s\log s)$, $s$~-- размер популяции.
 \end{frame}
 
 % ituphanov
@@ -460,22 +438,17 @@ Python
 % Запросто могут спросить: "Как вы проверили, что внедрены успешно? Ведь аппараты в воде не плавали."
 % я бы вообще объединил со следующим слайдом.
 \begin{frame}{Результат}
-Алгоритмы внедрены в СПУ комплекса ``МАРК''.
-\linebreak
-\linebreak
-Автоматический выбор алгоритма в зависимости от размера задачи.
 \begin{itemize}
-\item до 18 заданий -- алгоритм Хельда-Карпа
-\item до 40 заданий -- генетический алгоритм
-\item от 40 заданий -- жадный алгоритм
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Заключение}
-\begin{itemize}
+\item Алгоритмы внедрены в СПУ комплекса ``МАРК''.
 \item Система контроля версий git, 52 коммита, +4900 -1800. Языки C++ и Python.
+\item Автоматический выбор алгоритма в зависимости от размера задачи.
+    \begin{itemize}
+    \item до 18 заданий -- алгоритм Хельда-Карпа
+    \item до 40 заданий -- генетический алгоритм
+    \item от 40 заданий -- жадный алгоритм
+    \end{itemize}
 \end{itemize}
-
 \end{frame}
+
 
 \end{document}
